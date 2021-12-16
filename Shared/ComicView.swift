@@ -26,12 +26,12 @@ struct ComicView: View {
                     if let comic = comics[index] {
                         Text(comic.title ?? "Unknown")
                     } else if comicItems[index].resourceURI != nil {
-                        ProgressView()
+                        Backport.ProgressView()
                     } else {
                         Text("--")
                     }
                 }
-            }.navigationTitle(characterName)
+            }.backport.navigationTitle(characterName)
         }.onAppear {
             Task {
                 try await withThrowingTaskGroup(of: Comic.self) { group in

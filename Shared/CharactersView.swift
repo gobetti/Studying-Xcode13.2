@@ -19,13 +19,13 @@ struct CharactersView: View {
         NavigationView {
             Group {
                 if characters.isEmpty {
-                    ProgressView()
+                    Backport.ProgressView()
                 } else {
                     List(characters) { character in
                         Cell(character: character)
                     }
                 }
-            }.navigationTitle("Characters")
+            }.backport.navigationTitle("Characters")
         }.onAppear {
             Task {
                 characters = try await service.characters()
