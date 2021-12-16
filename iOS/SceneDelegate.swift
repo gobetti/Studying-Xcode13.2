@@ -1,6 +1,6 @@
 //
 //  SceneDelegate.swift
-//  Shared
+//  Xcode13_2 (iOS)
 //
 //  Created by Marcelo Gobetti on 16/12/21.
 //

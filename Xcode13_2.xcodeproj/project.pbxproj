@@ -26,6 +26,9 @@
 		D47038F1276AF6B8009C3E7E /* ComicView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D47038F0276AF6B8009C3E7E /* ComicView.swift */; };
 		D47038F2276AF6B8009C3E7E /* ComicView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D47038F0276AF6B8009C3E7E /* ComicView.swift */; };
 		D49B50DB276B0FF5001E95B0 /* URLSessionBackport in Frameworks */ = {isa = PBXBuildFile; productRef = D49B50DA276B0FF5001E95B0 /* URLSessionBackport */; };
+		D49B50E5276B14B3001E95B0 /* URLSessionBackport in Frameworks */ = {isa = PBXBuildFile; productRef = D49B50E4276B14B3001E95B0 /* URLSessionBackport */; };
+		D49B50EA276B16D7001E95B0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D49B50E8276B16BA001E95B0 /* AppDelegate.swift */; };
+		D49B50EF276B1A14001E95B0 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = D49B50ED276B19F9001E95B0 /* main.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,6 +46,8 @@
 		D47038EA276AE72E009C3E7E /* MarvelService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarvelService.swift; sourceTree = "<group>"; };
 		D47038ED276AE877009C3E7E /* MarvelModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarvelModels.swift; sourceTree = "<group>"; };
 		D47038F0276AF6B8009C3E7E /* ComicView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComicView.swift; sourceTree = "<group>"; };
+		D49B50E8276B16BA001E95B0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		D49B50ED276B19F9001E95B0 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +63,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D49B50E5276B14B3001E95B0 /* URLSessionBackport in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -81,6 +87,7 @@
 				D43A335A276B0CDE00C7C4D3 /* iOS */,
 				D47038D3276AE4CD009C3E7E /* macOS */,
 				D47038CD276AE4CD009C3E7E /* Products */,
+				D49B50E3276B14B3001E95B0 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -108,6 +115,8 @@
 		D47038D3276AE4CD009C3E7E /* macOS */ = {
 			isa = PBXGroup;
 			children = (
+				D49B50E8276B16BA001E95B0 /* AppDelegate.swift */,
+				D49B50ED276B19F9001E95B0 /* main.swift */,
 				D47038D4276AE4CD009C3E7E /* macOS.entitlements */,
 			);
 			path = macOS;
@@ -122,6 +131,13 @@
 				D47038EA276AE72E009C3E7E /* MarvelService.swift */,
 			);
 			path = API;
+			sourceTree = "<group>";
+		};
+		D49B50E3276B14B3001E95B0 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -160,6 +176,9 @@
 			dependencies = (
 			);
 			name = "Xcode13_2 (macOS)";
+			packageProductDependencies = (
+				D49B50E4276B14B3001E95B0 /* URLSessionBackport */,
+			);
 			productName = "Xcode13_2 (macOS)";
 			productReference = D47038D2276AE4CD009C3E7E /* Xcode13_2.app */;
 			productType = "com.apple.product-type.application";
@@ -247,8 +266,10 @@
 				D47038EF276AE877009C3E7E /* MarvelModels.swift in Sources */,
 				D47038E5276AE65D009C3E7E /* MarvelApi.swift in Sources */,
 				D47038E8276AE6B2009C3E7E /* MarvelApiAuthorization.swift in Sources */,
+				D49B50EA276B16D7001E95B0 /* AppDelegate.swift in Sources */,
 				D47038D8276AE4CD009C3E7E /* CharactersView.swift in Sources */,
 				D47038EC276AE72E009C3E7E /* MarvelService.swift in Sources */,
+				D49B50EF276B1A14001E95B0 /* main.swift in Sources */,
 				D47038F2276AF6B8009C3E7E /* ComicView.swift in Sources */,
 				D43A3355276B07BB00C7C4D3 /* Backport.swift in Sources */,
 			);
@@ -449,7 +470,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "me.gobetti.Xcode13-2";
 				PRODUCT_NAME = Xcode13_2;
@@ -477,7 +498,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "me.gobetti.Xcode13-2";
 				PRODUCT_NAME = Xcode13_2;
@@ -532,6 +553,11 @@
 
 /* Begin XCSwiftPackageProductDependency section */
 		D49B50DA276B0FF5001E95B0 /* URLSessionBackport */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D49B50D9276B0FF5001E95B0 /* XCRemoteSwiftPackageReference "URLSessionBackport" */;
+			productName = URLSessionBackport;
+		};
+		D49B50E4276B14B3001E95B0 /* URLSessionBackport */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = D49B50D9276B0FF5001E95B0 /* XCRemoteSwiftPackageReference "URLSessionBackport" */;
 			productName = URLSessionBackport;
