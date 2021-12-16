@@ -16,8 +16,14 @@ struct CharactersView: View {
     }
 
     var body: some View {
-        List(characters) { character in
-            Text(character.name ?? "Unknown")
+        Group {
+            if characters.isEmpty {
+                ProgressView()
+            } else {
+                List(characters) { character in
+                    Text(character.name ?? "Unknown")
+                }
+            }
         }.onAppear {
             Task {
                 characters = try await service.characters()
