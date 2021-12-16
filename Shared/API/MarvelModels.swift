@@ -19,21 +19,12 @@ enum Decoding {
     }(DateFormatter())
 }
 
-protocol ResultsContainer: Codable {
-    associatedtype MarvelType: Codable
-    var results: [MarvelType]? { get }
+struct ResultsContainer<Result: Codable>: Codable {
+    let results: [Result]?
 }
 
-struct DataWrapper<DataContainer: ResultsContainer>: Codable {
-    let data: DataContainer?
-}
-
-struct CharacterResultsContainer: ResultsContainer {
-    let results: [Character]?
-}
-
-struct ComicResultsContainer: ResultsContainer {
-    let results: [Comic]?
+struct DataWrapper<Result: Codable>: Codable {
+    let data: ResultsContainer<Result>?
 }
 
 struct Character: Codable, Equatable {
