@@ -5,8 +5,8 @@
 //  Created by Marcelo Gobetti on 12/10/18.
 //
 
+import CryptoKit
 import Foundation
-import SwiftHash
 
 // https://developer.marvel.com/documentation/authorization
 enum MarvelApiAuthorization {
@@ -18,8 +18,9 @@ enum MarvelApiAuthorization {
     }
 
     private static func hash(timestamp: String) -> String {
-        return MD5(timestamp + MarvelApiAuthorization.privateAPIKey + MarvelApiAuthorization.publicAPIKey)
-            .lowercased()
+        let string = timestamp + Self.privateAPIKey + Self.publicAPIKey
+        let data = string.data(using: .utf8)!
+        return Insecure.MD5.hash(data: data).hexString()
     }
 
     static var parameters: [String: String] {
@@ -27,5 +28,11 @@ enum MarvelApiAuthorization {
         return ["apikey": MarvelApiAuthorization.publicAPIKey,
                 "ts": timestamp,
                 "hash": hash(timestamp: timestamp)]
+    }
+}
+
+private extension Digest {
+    func hexString() -> String {
+        self.map { String(format: "%02x", $0) }.joined()
     }
 }
