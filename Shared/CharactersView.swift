@@ -26,7 +26,10 @@ struct CharactersView: View {
                     }
                 }
             }.backport.navigationTitle("Characters")
-        }.onAppear {
+        }
+        .navigationViewStyle(DoubleColumnNavigationViewStyle())
+        .padding()
+        .onAppear {
             Task {
                 characters = try await service.characters()
             }

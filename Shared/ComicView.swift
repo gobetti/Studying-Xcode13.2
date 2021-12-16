@@ -22,7 +22,7 @@ struct ComicView: View {
     var body: some View {
         NavigationView {
             Group {
-                List(comics.indices) { index in
+                List(comics.indices, id: \.self) { index in
                     if let comic = comics[index] {
                         Text(comic.title ?? "Unknown")
                     } else if comicItems[index].resourceURI != nil {
