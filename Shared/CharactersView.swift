@@ -16,14 +16,16 @@ struct CharactersView: View {
     }
 
     var body: some View {
-        Group {
-            if characters.isEmpty {
-                ProgressView()
-            } else {
-                List(characters) { character in
-                    Text(character.name ?? "Unknown")
+        NavigationView {
+            Group {
+                if characters.isEmpty {
+                    ProgressView()
+                } else {
+                    List(characters) { character in
+                        Text(character.name ?? "Unknown")
+                    }
                 }
-            }
+            }.navigationTitle("Characters")
         }.onAppear {
             Task {
                 characters = try await service.characters()
