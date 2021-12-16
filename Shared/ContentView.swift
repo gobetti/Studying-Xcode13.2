@@ -8,14 +8,32 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var characters: [Character]
+    private let service = MarvelService()
+
+    init(characters: [Character] = []) {
+        self.characters = characters
+    }
+
     var body: some View {
-        Text("Hello, world!")
-            .padding()
+        List(characters) { character in
+            Text(character.name ?? "Unknown")
+        }.onAppear {
+            Task {
+                characters = try await service.characters()
+            }
+        }
     }
 }
 
+extension Character: Identifiable {}
+
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        ContentView(characters: [
+            .init(id: 1, name: "Name", comics: .init(items: [
+                .init(resourceURI: nil)
+            ]))
+        ])
     }
 }
