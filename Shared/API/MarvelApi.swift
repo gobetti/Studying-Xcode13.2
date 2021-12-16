@@ -22,6 +22,7 @@ extension MarvelApi {
     var baseURL: URL {
         switch self {
         case .comic(let resourceURI):
+            let resourceURI = resourceURI.replacingOccurrences(of: "http://", with: "https://")
             if let path = URL(string: resourceURI)?.path,
                 let baseURL = URL(string: resourceURI.replacingOccurrences(of: path, with: "")) {
                 return baseURL

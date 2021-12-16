@@ -22,7 +22,7 @@ struct CharactersView: View {
                     ProgressView()
                 } else {
                     List(characters) { character in
-                        Text(character.name ?? "Unknown")
+                        Cell(character: character)
                     }
                 }
             }.navigationTitle("Characters")
@@ -30,6 +30,31 @@ struct CharactersView: View {
             Task {
                 characters = try await service.characters()
             }
+        }
+    }
+}
+
+private extension CharactersView {
+    struct Cell: View {
+        let character: Character
+        private var name: String { character.name ?? "Unknown" }
+        var body: some View {
+            if let comicSummary = character.comics?.items?.first {
+                NavigationLink(destination: ComicView(characterName: name, comicSummary: comicSummary)) {
+                    Content(name: name)
+                }
+            } else {
+                Content(name: name)
+            }
+        }
+    }
+}
+
+private extension CharactersView.Cell {
+    struct Content: View {
+        let name: String
+        var body: some View {
+            Text(name)
         }
     }
 }
