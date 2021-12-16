@@ -13,7 +13,7 @@ enum MarvelApiAuthorization {
     private static let publicAPIKey = "<REPLACE ME>"
     private static let privateAPIKey = "<REPLACE ME>"
 
-    private static var timestamp: String {
+    private static func timestamp() -> String {
         return Date().timeIntervalSinceReferenceDate.description
     }
 
@@ -24,10 +24,15 @@ enum MarvelApiAuthorization {
     }
 
     static var parameters: [String: String] {
-        let timestamp = self.timestamp
-        return ["apikey": MarvelApiAuthorization.publicAPIKey,
-                "ts": timestamp,
-                "hash": hash(timestamp: timestamp)]
+        parameters()
+    }
+
+    private static func parameters(timestamp: String = timestamp()) -> [String: String] {
+        [
+            "apikey": MarvelApiAuthorization.publicAPIKey,
+            "ts": timestamp,
+            "hash": hash(timestamp: timestamp)
+        ]
     }
 }
 
