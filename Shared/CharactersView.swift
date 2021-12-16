@@ -39,8 +39,8 @@ private extension CharactersView {
         let character: Character
         private var name: String { character.name ?? "Unknown" }
         var body: some View {
-            if let comicSummary = character.comics?.items?.first {
-                NavigationLink(destination: ComicView(characterName: name, comicSummary: comicSummary)) {
+            if let comicItems = character.comics?.items, !comicItems.isEmpty {
+                NavigationLink(destination: ComicView(characterName: name, comicItems: comicItems)) {
                     Content(name: name)
                 }
             } else {
