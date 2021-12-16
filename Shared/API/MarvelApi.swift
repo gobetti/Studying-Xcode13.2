@@ -12,7 +12,13 @@ enum MarvelApi {
     case comic(resourceURI: String)
 }
 
-extension MarvelApi: ProductionTargetType {
+extension URLSession {
+    func request(_ endpoint: MarvelApi) async throws -> Data {
+        try await data(from: endpoint.makeURL()).0
+    }
+}
+
+extension MarvelApi {
     var baseURL: URL {
         switch self {
         case .comic(let resourceURI):
@@ -36,15 +42,27 @@ extension MarvelApi: ProductionTargetType {
         }
     }
 
-    var task: Task {
+    func makeURL() throws -> URL {
+        guard var urlComponents = URLComponents(url: baseURL.appendingPathComponent(path), resolvingAgainstBaseURL: false) else {
+            throw MarvelApiError.invalidPath
+        }
         let authParameters = MarvelApiAuthorization.parameters
-
+        let parameters: [String: String]
         switch self {
         case .characters(let offset):
-            let parameters = ["offset": "\(offset)"]
-            return Task(parameters: authParameters.merging(parameters) { _, new in new })
+            parameters = authParameters.merging(["offset": "\(offset)"]) { $1 }
         case .comic:
-            return Task(parameters: authParameters)
+            parameters = authParameters
         }
+        urlComponents.queryItems = parameters.map { URLQueryItem(name: $0.key, value: $0.value) }
+        guard let url = urlComponents.url else {
+            throw MarvelApiError.invalidParameters
+        }
+        return url
     }
+}
+
+enum MarvelApiError: Error {
+    case invalidPath
+    case invalidParameters
 }
