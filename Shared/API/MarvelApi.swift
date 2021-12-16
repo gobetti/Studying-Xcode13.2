@@ -19,20 +19,7 @@ extension URLSession {
 }
 
 extension MarvelApi {
-    var baseURL: URL {
-        switch self {
-        case .comic(let resourceURI):
-            let resourceURI = resourceURI.replacingOccurrences(of: "http://", with: "https://")
-            if let path = URL(string: resourceURI)?.path,
-                let baseURL = URL(string: resourceURI.replacingOccurrences(of: path, with: "")) {
-                return baseURL
-            } else {
-                fallthrough
-            }
-        default:
-            return URL(string: "https://gateway.marvel.com:443")! // swiftlint:disable:this force_unwrapping
-        }
-    }
+    private static let baseURL = URL(string: "https://gateway.marvel.com:443")! // swiftlint:disable:this force_unwrapping
 
     var path: String {
         switch self {
@@ -44,7 +31,7 @@ extension MarvelApi {
     }
 
     func makeURL() throws -> URL {
-        guard var urlComponents = URLComponents(url: baseURL.appendingPathComponent(path), resolvingAgainstBaseURL: false) else {
+        guard var urlComponents = URLComponents(url: Self.baseURL.appendingPathComponent(path), resolvingAgainstBaseURL: false) else {
             throw MarvelApiError.invalidPath
         }
         let authParameters = MarvelApiAuthorization.parameters
