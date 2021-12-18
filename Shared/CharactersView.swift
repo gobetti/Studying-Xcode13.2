@@ -27,8 +27,7 @@ struct CharactersView: View {
                 }
             }.backport.navigationTitle("Characters")
         }
-        .navigationViewStyle(DoubleColumnNavigationViewStyle())
-        .padding()
+        .adjustNavigationViewStyleForIPad()
         .onAppear {
             Task {
                 characters = try await service.characters()
@@ -63,6 +62,21 @@ private extension CharactersView.Cell {
 }
 
 extension Character: Identifiable {}
+
+private extension View {
+    @ViewBuilder func adjustNavigationViewStyleForIPad() -> some View {
+        #if os(macOS)
+        self
+        #else
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            self.navigationViewStyle(DoubleColumnNavigationViewStyle())
+                .padding()
+        } else {
+            self
+        }
+        #endif
+    }
+}
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
