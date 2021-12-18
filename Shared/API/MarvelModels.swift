@@ -41,7 +41,7 @@ struct Comic: Codable, Equatable {
     let id: Int?
     let title: String?
     let description: String?
-    let thumbnail: Image?
+    let thumbnail: ComicImage?
 
     static func == (lhs: Comic, rhs: Comic) -> Bool {
         return lhs.id == rhs.id
@@ -56,9 +56,14 @@ struct ComicSummary: Codable {
     let resourceURI: String?
 }
 
-struct Image: Codable {
+struct ComicImage: Codable {
     let path: String?
     let `extension`: ImageExtension?
+
+    var url: URL? {
+        guard let path = path, let baseURL = URL(string: path.replacingOccurrences(of: "http://", with: "https://")), let rawExtension = `extension`?.rawValue else { return nil }
+        return baseURL.appendingPathExtension(rawExtension)
+    }
 }
 
 enum ImageExtension: String, Codable {

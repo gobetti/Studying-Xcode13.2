@@ -24,7 +24,7 @@ struct ComicsView: View {
             Group {
                 List(comics.indices, id: \.self) { index in
                     if let comic = comics[index] {
-                        Text(comic.title ?? "Unknown")
+                        Cell(comic: comic)
                     } else if comicItems[index].resourceURI != nil {
                         Backport.ProgressView()
                     } else {
@@ -48,6 +48,28 @@ struct ComicsView: View {
                     }
                 }
             }
+        }
+    }
+}
+
+extension ComicsView {
+    struct Cell: View {
+        let comic: Comic
+
+        var body: some View {
+            HStack(spacing: 8) {
+                Backport.AsyncImage(url: comic.thumbnail?.url) { image in
+                    image
+                        .resizable()
+                        .frame(width: 96)
+                        .aspectRatio(0.65, contentMode: .fill)
+                } placeholder: {
+                    Color.gray
+                        .frame(width: 96)
+                        .aspectRatio(0.65, contentMode: .fill)
+                }
+                Text(comic.title ?? "Unknown")
+            }.padding(.vertical)
         }
     }
 }
