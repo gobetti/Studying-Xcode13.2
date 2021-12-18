@@ -1,5 +1,5 @@
 //
-//  ComicView.swift
+//  ComicsView.swift
 //  Xcode13_2
 //
 //  Created by Marcelo Gobetti on 16/12/21.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ComicView: View {
+struct ComicsView: View {
     let characterName: String
     let comicItems: [ComicSummary]
     @State private var comics: [Comic?]
@@ -56,7 +56,7 @@ extension Comic: Identifiable {}
 
 struct ComicView_Previews: PreviewProvider {
     static var previews: some View {
-        ComicView(characterName: "Name", comicItems: [
+        ComicsView(characterName: "Name", comicItems: [
             .init(resourceURI: nil)
         ])
     }
