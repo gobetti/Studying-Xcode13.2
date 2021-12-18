@@ -37,8 +37,8 @@ extension Backport where Content: View {
 }
 
 extension Backport where Content == Any {
-    @available(iOS, introduced: 13.0, deprecated: 15.0, message: "This override is no longer necessary; you should remove `Backport.` and use the built-in component instead.")
-    @available(macOS, introduced: 10.15, deprecated: 12.0, message: "This override is no longer necessary; you should remove `Backport.` and use the built-in component instead.")
+    @available(iOS, deprecated: 15.0, message: "This override is no longer necessary; you should remove `Backport.` and use the built-in component instead.")
+    @available(macOS, deprecated: 12.0, message: "This override is no longer necessary; you should remove `Backport.` and use the built-in component instead.")
     @ViewBuilder static func AsyncImage<I: View, P: View>(url: URL?, @ViewBuilder content: @escaping (Image) -> I, @ViewBuilder placeholder: @escaping () -> P) -> some View {
         if #available(iOS 15, macOS 12, *) {
             SwiftUI.AsyncImage(url: url, content: content, placeholder: placeholder)
@@ -47,18 +47,40 @@ extension Backport where Content == Any {
         }
     }
 
-    @available(iOS, introduced: 13.0, deprecated: 14.0, message: "This override is no longer necessary; you should remove `Backport.` and use the built-in component instead.")
-    @available(macOS, introduced: 10.15, deprecated: 11.0, message: "This override is no longer necessary; you should remove `Backport.` and use the built-in component instead.")
+    @available(iOS, deprecated: 14.0, message: "This override is no longer necessary; you should remove `Backport.` and use the built-in component instead.")
+    @available(macOS, deprecated: 11.0, message: "This override is no longer necessary; you should remove `Backport.` and use the built-in component instead.")
     @ViewBuilder static func ProgressView() -> some View {
         if #available(iOS 14, macOS 11, *) {
             SwiftUI.ProgressView()
         } else {
-            Text("Loading...")
+            BackportProgressView()
         }
     }
 }
 
+#if os(macOS)
+@available(macOS, deprecated: 11.0, message: "This class is no longer necessary.")
+private struct BackportProgressView: NSViewRepresentable {
+    typealias NSViewType = NSProgressIndicator
+    func makeNSView(context: Context) -> NSViewType { .init() }
+    func updateNSView(_ uiView: NSViewType, context: Context) {}
+}
+#else
+@available(iOS, deprecated: 14.0, message: "This class is no longer necessary.")
+private struct BackportProgressView: UIViewRepresentable {
+    typealias UIViewType = UIActivityIndicatorView
+    func makeUIView(context: Context) -> UIViewType {
+        let view = UIActivityIndicatorView(style: .large)
+        view.startAnimating()
+        return view
+    }
+    func updateUIView(_ uiView: UIViewType, context: Context) {}
+}
+#endif
+
 /// A quick version of AsyncImage that works before iOS 15/macOS 12, not optimized at all, I just wanted to have a feeling of how hard it would be :)
+@available(iOS, deprecated: 15.0, message: "This class is no longer necessary.")
+@available(macOS, deprecated: 12.0, message: "This class is no longer necessary.")
 private struct BackportAsyncImage<I: View, P: View>: View {
     let url: URL?
     @ViewBuilder let content: (Image) -> I
