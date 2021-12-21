@@ -34,21 +34,20 @@ struct ComicsView: View {
             }.backport.navigationTitle(characterName)
         }.onAppear {
             Task {
-                try await withThrowingTaskGroup(of: Comic.self) { group in
-                    for (offset, element) in comicItems.enumerated() {
-                        guard let resourceURI = element.resourceURI else { return }
+                await withThrowingTaskGroup(of: Void.self) { group in
+                    comicItems.indices.forEach { comicIndex in
                         group.addTask {
-                            try await service.comic(resourceURI: resourceURI)
-                        }
-                        // I think this `await` makes it so the next task is only added once this one is done,
-                        // but ideally I wanted to start them all (or up to N) at once and populate the appropriate `comics` index
-                        for try await comic in group {
-                            comics[offset] = comic
+                            try await downloadComic(at: comicIndex)
                         }
                     }
                 }
             }
         }
+    }
+
+    private func downloadComic(at index: Int) async throws {
+        guard let resourceURI = comicItems[index].resourceURI else { return }
+        comics[index] = try await service.comic(resourceURI: resourceURI)
     }
 }
 
