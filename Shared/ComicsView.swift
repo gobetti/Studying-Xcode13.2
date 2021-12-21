@@ -9,45 +9,29 @@ import SwiftUI
 
 struct ComicsView: View {
     let characterName: String
-    let comicItems: [ComicSummary]
-    @State private var comics: [Comic?]
-    private let service = MarvelService()
+    @ObservedObject private var comicsManager: ComicsManager
 
     init(characterName: String, comicItems: [ComicSummary]) {
         self.characterName = characterName
-        self.comicItems = comicItems
-        comics = Array(repeating: nil, count: comicItems.count)
+        comicsManager = ComicsManager(comicItems: comicItems)
     }
     
     var body: some View {
         NavigationView {
             Group {
-                List(comics.indices, id: \.self) { index in
-                    if let comic = comics[index] {
+                List(comicsManager.comics.indices, id: \.self) { index in
+                    if let comic = comicsManager.comics[index] {
                         Cell(comic: comic)
-                    } else if comicItems[index].resourceURI != nil {
+                    } else if comicsManager.comicItems[index].resourceURI != nil {
                         Backport.ProgressView()
+                            .onAppear { comicsManager.cellAppeared(at: index) }
+                            .onDisappear { comicsManager.cellDisappeared(at: index) }
                     } else {
                         Text("--")
                     }
                 }
             }.backport.navigationTitle(characterName)
-        }.onAppear {
-            Task {
-                await withThrowingTaskGroup(of: Void.self) { group in
-                    comicItems.indices.forEach { comicIndex in
-                        group.addTask {
-                            try await downloadComic(at: comicIndex)
-                        }
-                    }
-                }
-            }
         }
-    }
-
-    private func downloadComic(at index: Int) async throws {
-        guard let resourceURI = comicItems[index].resourceURI else { return }
-        comics[index] = try await service.comic(resourceURI: resourceURI)
     }
 }
 
@@ -68,8 +52,38 @@ extension ComicsView {
                         .aspectRatio(0.65, contentMode: .fill)
                 }
                 Text(comic.title ?? "Unknown")
-            }.padding(.vertical)
+            }
+            .padding(.vertical)
         }
+    }
+}
+
+@MainActor
+final class ComicsManager: ObservableObject {
+    let comicItems: [ComicSummary]
+    @Published var comics: [Comic?]
+    private var tasks: [Task<Void, Error>?]
+    private let service = MarvelService()
+
+    init(comicItems: [ComicSummary]) {
+        self.comicItems = comicItems
+        tasks = Array(repeating: nil, count: comicItems.count)
+        comics = Array(repeating: nil, count: comicItems.count)
+    }
+
+    func cellAppeared(at index: Int) {
+        guard let resourceURI = comicItems[index].resourceURI else { return }
+        if let existingTask = tasks[index], !existingTask.isCancelled { return }
+        // TODO: retry if it failed
+        tasks[index] = Task {
+            let comic = try await service.comic(resourceURI: resourceURI)
+            try Task.checkCancellation()
+            comics[index] = comic
+        }
+    }
+
+    func cellDisappeared(at index: Int) {
+        tasks[index]?.cancel()
     }
 }
 
