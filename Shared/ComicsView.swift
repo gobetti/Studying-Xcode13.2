@@ -22,12 +22,11 @@ struct ComicsView: View {
                 List(comicsManager.comics.indices, id: \.self) { index in
                     if let comic = comicsManager.comics[index] {
                         Cell(comic: comic)
-                    } else if comicsManager.comicItems[index].resourceURI != nil {
+                    } else {
+                        // TODO: show something if it failed
                         Backport.ProgressView()
                             .onAppear { comicsManager.cellAppeared(at: index) }
                             .onDisappear { comicsManager.cellDisappeared(at: index) }
-                    } else {
-                        Text("--")
                     }
                 }
             }.backport.navigationTitle(characterName)
@@ -60,22 +59,23 @@ extension ComicsView {
 
 @MainActor
 final class ComicsManager: ObservableObject {
-    let comicItems: [ComicSummary]
     @Published var comics: [Comic?]
-    private var tasks: [Task<Void, Error>?]
+
+    private let resourceURIs: [String]
+    private typealias ComicTask = Task<Void, Error>
+    private var tasks = [String: ComicTask]()
     private let service = MarvelService()
 
     init(comicItems: [ComicSummary]) {
-        self.comicItems = comicItems
-        tasks = Array(repeating: nil, count: comicItems.count)
-        comics = Array(repeating: nil, count: comicItems.count)
+        resourceURIs = comicItems.compactMap { $0.resourceURI }
+        comics = Array(repeating: nil, count: resourceURIs.count)
     }
 
     func cellAppeared(at index: Int) {
-        guard let resourceURI = comicItems[index].resourceURI else { return }
-        if let existingTask = tasks[index], !existingTask.isCancelled { return }
-        // TODO: retry if it failed
-        tasks[index] = Task {
+        let (resourceURI, task) = resourceAndTask(at: index)
+        if task?.isCancelled == false { return }
+        // TODO: retry if it failed, depending on the failure
+        tasks[resourceURI] = Task {
             let comic = try await service.comic(resourceURI: resourceURI)
             try Task.checkCancellation()
             comics[index] = comic
@@ -83,7 +83,12 @@ final class ComicsManager: ObservableObject {
     }
 
     func cellDisappeared(at index: Int) {
-        tasks[index]?.cancel()
+        resourceAndTask(at: index).task?.cancel()
+    }
+
+    private func resourceAndTask(at index: Int) -> (resourceURI: String, task: ComicTask?) {
+        let resourceURI = resourceURIs[index]
+        return (resourceURI, tasks[resourceURI])
     }
 }
 
@@ -92,7 +97,7 @@ extension Comic: Identifiable {}
 struct ComicView_Previews: PreviewProvider {
     static var previews: some View {
         ComicsView(characterName: "Name", comicItems: [
-            .init(resourceURI: nil)
+            .init(resourceURI: "https://picsum.photos/96")
         ])
     }
 }
