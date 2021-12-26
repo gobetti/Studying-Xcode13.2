@@ -63,6 +63,7 @@ final class ComicsManager: ObservableObject {
 
     private let resourceURIs: [String]
     private typealias ComicTask = Task<Void, Error>
+    private var resourceURIVisibleIndices = [String: Set<Int>]()
     private var tasks = [String: ComicTask]()
     private let service = MarvelService()
 
@@ -73,6 +74,7 @@ final class ComicsManager: ObservableObject {
 
     func cellAppeared(at index: Int) {
         let (resourceURI, task) = resourceAndTask(at: index)
+        resourceURIVisibleIndices[resourceURI] = (resourceURIVisibleIndices[resourceURI] ?? []).union([index])
         if task?.isCancelled == false { return }
         // TODO: retry if it failed, depending on the failure
         tasks[resourceURI] = Task {
@@ -83,7 +85,12 @@ final class ComicsManager: ObservableObject {
     }
 
     func cellDisappeared(at index: Int) {
-        resourceAndTask(at: index).task?.cancel()
+        let (resourceURI, task) = resourceAndTask(at: index)
+        let subtracting = (resourceURIVisibleIndices[resourceURI] ?? []).subtracting([index])
+        resourceURIVisibleIndices[resourceURI] = subtracting
+        if subtracting.isEmpty {
+            task?.cancel()
+        }
     }
 
     private func resourceAndTask(at index: Int) -> (resourceURI: String, task: ComicTask?) {
