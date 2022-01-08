@@ -9,24 +9,34 @@ import SwiftUI
 
 struct ComicsView: View {
     let characterName: String
-    @ObservedObject private var comicsManager: ComicsManager
+    @State private var comics: [Comic?]
+    private let resourceURIs: [String]
+    private let service = MarvelService()
+    private let tasks = NSMutableDictionary()
 
     init(characterName: String, comicItems: [ComicSummary]) {
         self.characterName = characterName
-        comicsManager = ComicsManager(comicItems: comicItems)
+        resourceURIs = comicItems.compactMap { $0.resourceURI }
+        comics = Array(repeating: nil, count: resourceURIs.count)
     }
     
     var body: some View {
         NavigationView {
             Group {
-                List(comicsManager.comics.indices, id: \.self) { index in
-                    if let comic = comicsManager.comics[index] {
+                List(comics.indices, id: \.self) { index in
+                    if let comic = comics[index] {
                         Cell(comic: comic)
                     } else {
                         // TODO: show something if it failed
                         Backport.ProgressView()
-                            .onAppear { comicsManager.cellAppeared(at: index) }
-                            .onDisappear { comicsManager.cellDisappeared(at: index) }
+                            .backport.task(cache: tasks) {
+                                let resourceURI = resourceURIs[index]
+                                do {
+                                    comics[index] = try await service.comic(resourceURI: resourceURI)
+                                } catch {
+                                    assertionFailure("Handle network errors")
+                                }
+                            }
                     }
                 }
             }.backport.navigationTitle(characterName)
@@ -54,48 +64,6 @@ extension ComicsView {
             }
             .padding(.vertical)
         }
-    }
-}
-
-@MainActor
-final class ComicsManager: ObservableObject {
-    @Published var comics: [Comic?]
-
-    private let resourceURIs: [String]
-    private typealias ComicTask = Task<Void, Error>
-    private var resourceURIVisibleIndices = [String: Set<Int>]()
-    private var tasks = [String: ComicTask]()
-    private let service = MarvelService()
-
-    init(comicItems: [ComicSummary]) {
-        resourceURIs = comicItems.compactMap { $0.resourceURI }
-        comics = Array(repeating: nil, count: resourceURIs.count)
-    }
-
-    func cellAppeared(at index: Int) {
-        let (resourceURI, task) = resourceAndTask(at: index)
-        resourceURIVisibleIndices[resourceURI] = (resourceURIVisibleIndices[resourceURI] ?? []).union([index])
-        if task?.isCancelled == false { return }
-        // TODO: retry if it failed, depending on the failure
-        tasks[resourceURI] = Task {
-            let comic = try await service.comic(resourceURI: resourceURI)
-            try Task.checkCancellation()
-            comics[index] = comic
-        }
-    }
-
-    func cellDisappeared(at index: Int) {
-        let (resourceURI, task) = resourceAndTask(at: index)
-        let subtracting = (resourceURIVisibleIndices[resourceURI] ?? []).subtracting([index])
-        resourceURIVisibleIndices[resourceURI] = subtracting
-        if subtracting.isEmpty {
-            task?.cancel()
-        }
-    }
-
-    private func resourceAndTask(at index: Int) -> (resourceURI: String, task: ComicTask?) {
-        let resourceURI = resourceURIs[index]
-        return (resourceURI, tasks[resourceURI])
     }
 }
 

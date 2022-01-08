@@ -22,7 +22,7 @@ extension View {
 
 extension Backport where Content: View {
     @available(iOS, introduced: 13.0, deprecated: 14.0, message: "This override is no longer necessary; you should remove `.backport` and use the built-in methods instead.")
-    @available(macOS, introduced: 10.15, deprecated: 11.0, message: "This override is no longer necessary; you should remove `Backport.` and use the built-in component instead.")
+    @available(macOS, introduced: 10.15, deprecated: 11.0, message: "This override is no longer necessary; you should remove `backport.` and use the built-in component instead.")
     @ViewBuilder func navigationTitle<S>(_ title: S) -> some View where S: StringProtocol {
         if #available(iOS 14, macOS 11, *) {
             content.navigationTitle(title)
@@ -34,8 +34,29 @@ extension Backport where Content: View {
             #endif
         }
     }
+
+    @available(iOS, introduced: 13.0, deprecated: 15.0, message: "This override is no longer necessary; you should remove `.backport` and use the built-in methods instead.")
+    @available(macOS, introduced: 10.15, deprecated: 12.0, message: "This override is no longer necessary; you should remove `backport.` and use the built-in component instead.")
+    @ViewBuilder func task(priority: TaskPriority = .userInitiated, cache: NSMutableDictionary, _ action: @escaping @Sendable () async -> Void) -> some View {
+        // using NSMutableDictionary so it can be mutated, `inout Swift.Dictionary` wouldn't work since our `content` is immutable
+        if #available(iOS 15, macOS 12, *) {
+            content.task(priority: priority, action)
+        } else {
+            let key = UUID().uuidString
+            content
+                .onAppear {
+                    cache.setObject(Task(priority: priority, operation: action), forKey: key as NSString)
+                }.onDisappear {
+                    guard let object = cache[key] else { return }
+                    guard let task = object as? Task<Void, Never> else { return assertionFailure("Unexpected Task type") }
+                    task.cancel()
+                    cache.removeObject(forKey: key)
+                }
+        }
+    }
 }
 
+// MARK: - ViewBuilders
 extension Backport where Content == Any {
     @available(iOS, deprecated: 15.0, message: "This override is no longer necessary; you should remove `Backport.` and use the built-in component instead.")
     @available(macOS, deprecated: 12.0, message: "This override is no longer necessary; you should remove `Backport.` and use the built-in component instead.")
@@ -90,6 +111,7 @@ private struct BackportAsyncImage<I: View, P: View>: View {
     #else
     @State private var image: UIImage?
     #endif
+    private let tasks = NSMutableDictionary()
 
     var body: some View {
         Group {
@@ -102,11 +124,14 @@ private struct BackportAsyncImage<I: View, P: View>: View {
             } else {
                 placeholder()
             }
-        }.onAppear {
+        }.backport.task(cache: tasks) {
             guard let url = url else { return }
-            Task {
+            do {
                 let (data, _) = try await URLSession.shared.backport.data(from: url)
                 image = .init(data: data)
+            } catch {
+                assertionFailure("Handle network errors")
+                image = nil
             }
         }
     }

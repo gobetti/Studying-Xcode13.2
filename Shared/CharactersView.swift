@@ -10,6 +10,7 @@ import SwiftUI
 struct CharactersView: View {
     @State private var characters: [Character]
     private let service = MarvelService()
+    private let tasks = NSMutableDictionary()
 
     init(characters: [Character] = []) {
         self.characters = characters
@@ -28,9 +29,11 @@ struct CharactersView: View {
             }.backport.navigationTitle("Characters")
         }
         .adjustNavigationViewStyleForIPad()
-        .onAppear {
-            Task {
+        .backport.task(cache: tasks) {
+            do {
                 characters = try await service.characters()
+            } catch {
+                assertionFailure("Handle network errors")
             }
         }
     }
