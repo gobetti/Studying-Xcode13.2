@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D424E7F327B87FCD007056B9 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = D424E7F227B87FCD007056B9 /* APIClient.swift */; };
+		D424E7F427B87FCD007056B9 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = D424E7F227B87FCD007056B9 /* APIClient.swift */; };
 		D43A3354276B07BB00C7C4D3 /* Backport.swift in Sources */ = {isa = PBXBuildFile; fileRef = D43A3353276B07BB00C7C4D3 /* Backport.swift */; };
 		D43A3355276B07BB00C7C4D3 /* Backport.swift in Sources */ = {isa = PBXBuildFile; fileRef = D43A3353276B07BB00C7C4D3 /* Backport.swift */; };
 		D43A3358276B0A3400C7C4D3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D43A3357276B0A3400C7C4D3 /* AppDelegate.swift */; };
@@ -32,6 +34,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		D424E7F227B87FCD007056B9 /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
 		D43A3353276B07BB00C7C4D3 /* Backport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Backport.swift; sourceTree = "<group>"; };
 		D43A3357276B0A3400C7C4D3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D43A335B276B0D1300C7C4D3 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -125,6 +128,7 @@
 		D47038E9276AE6BC009C3E7E /* API */ = {
 			isa = PBXGroup;
 			children = (
+				D424E7F227B87FCD007056B9 /* APIClient.swift */,
 				D47038E3276AE65D009C3E7E /* MarvelApi.swift */,
 				D47038E6276AE6B2009C3E7E /* MarvelApiAuthorization.swift */,
 				D47038ED276AE877009C3E7E /* MarvelModels.swift */,
@@ -250,6 +254,7 @@
 				D47038EE276AE877009C3E7E /* MarvelModels.swift in Sources */,
 				D47038E4276AE65D009C3E7E /* MarvelApi.swift in Sources */,
 				D47038E7276AE6B2009C3E7E /* MarvelApiAuthorization.swift in Sources */,
+				D424E7F327B87FCD007056B9 /* APIClient.swift in Sources */,
 				D43A3358276B0A3400C7C4D3 /* AppDelegate.swift in Sources */,
 				D47038D7276AE4CD009C3E7E /* CharactersView.swift in Sources */,
 				D47038EB276AE72E009C3E7E /* MarvelService.swift in Sources */,
@@ -266,6 +271,7 @@
 				D47038EF276AE877009C3E7E /* MarvelModels.swift in Sources */,
 				D47038E5276AE65D009C3E7E /* MarvelApi.swift in Sources */,
 				D47038E8276AE6B2009C3E7E /* MarvelApiAuthorization.swift in Sources */,
+				D424E7F427B87FCD007056B9 /* APIClient.swift in Sources */,
 				D49B50EA276B16D7001E95B0 /* AppDelegate.swift in Sources */,
 				D47038D8276AE4CD009C3E7E /* CharactersView.swift in Sources */,
 				D47038EC276AE72E009C3E7E /* MarvelService.swift in Sources */,

@@ -6,17 +6,10 @@
 //
 
 import Foundation
-import URLSessionBackport
 
 enum MarvelApi {
     case characters(offset: Int)
     case comic(resourceURI: String)
-}
-
-extension URLSession {
-    func request(_ endpoint: MarvelApi) async throws -> Data {
-        try await backport.data(from: endpoint.makeURL()).0
-    }
 }
 
 extension MarvelApi {
