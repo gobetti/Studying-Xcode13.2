@@ -33,7 +33,7 @@ struct CharactersView: View {
             do {
                 characters = try await service.characters()
             } catch {
-                assertionFailure("Handle network errors")
+                assertionFailure("FIXME: Unhandled network error - \(error.localizedDescription)")
             }
         }
     }

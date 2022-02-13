@@ -130,7 +130,7 @@ private struct BackportAsyncImage<I: View, P: View>: View {
                 let (data, _) = try await URLSession.shared.backport.data(from: url)
                 image = .init(data: data)
             } catch {
-                assertionFailure("Handle network errors")
+                assertionFailure("FIXME: Unhandled network error - \(error.localizedDescription)")
                 image = nil
             }
         }

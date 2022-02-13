@@ -20,6 +20,12 @@ extension URLSession {
     }
 }
 
-enum APIClientError: Error {
+enum APIClientError: LocalizedError {
     case unacceptableStatusCode(Int)
+    
+    var errorDescription: String? {
+        switch self {
+        case .unacceptableStatusCode(let statusCode): return "Server responded with \(statusCode)" // TODO: localize
+        }
+    }
 }

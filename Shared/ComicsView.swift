@@ -34,7 +34,7 @@ struct ComicsView: View {
                                 do {
                                     comics[index] = try await service.comic(resourceURI: resourceURI)
                                 } catch {
-                                    assertionFailure("Handle network errors")
+                                    assertionFailure("FIXME: Unhandled network error - \(error.localizedDescription)")
                                 }
                             }
                     }
